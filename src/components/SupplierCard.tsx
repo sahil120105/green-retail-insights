@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Minus, MapPin, Leaf, Award, Droplets, Zap, Factory } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, MapPin, Leaf, Award, Droplets, Zap } from 'lucide-react';
 
 interface Product {
   name: string;

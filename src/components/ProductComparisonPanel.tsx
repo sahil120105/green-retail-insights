@@ -5,81 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowUpDown, Leaf, Zap, Droplets, Award } from 'lucide-react';
-
-interface ProductComparison {
-  productName: string;
-  category: 'clothes' | 'food' | 'supplies';
-  suppliers: {
-    name: string;
-    co2PerUnit: number;
-    energyPerUnit: number;
-    waterPerUnit: number;
-    environmentalScore: number;
-    price: number;
-    isRecommended: boolean;
-  }[];
-}
+import { useSupplierProducts } from '@/hooks/useSupabaseData';
+import OrderProductModal from './OrderProductModal';
 
 const ProductComparisonPanel = () => {
-  const productComparisons: ProductComparison[] = [
-    {
-      productName: "Organic Cotton T-Shirt",
-      category: "clothes",
-      suppliers: [
-        {
-          name: "GreenTech Fabrics",
-          co2PerUnit: 2.1,
-          energyPerUnit: 15.2,
-          waterPerUnit: 180,
-          environmentalScore: 92,
-          price: 25.99,
-          isRecommended: true
-        },
-        {
-          name: "Traditional Textiles",
-          co2PerUnit: 4.8,
-          energyPerUnit: 28.5,
-          waterPerUnit: 320,
-          environmentalScore: 45,
-          price: 18.99,
-          isRecommended: false
-        },
-        {
-          name: "EcoMaterials Co.",
-          co2PerUnit: 2.8,
-          energyPerUnit: 18.7,
-          waterPerUnit: 210,
-          environmentalScore: 87,
-          price: 23.50,
-          isRecommended: false
-        }
-      ]
-    },
-    {
-      productName: "Recycled Paper (1000 sheets)",
-      category: "supplies",
-      suppliers: [
-        {
-          name: "NextGen Materials",
-          co2PerUnit: 1.2,
-          energyPerUnit: 8.5,
-          waterPerUnit: 45,
-          environmentalScore: 95,
-          price: 12.99,
-          isRecommended: true
-        },
-        {
-          name: "Standard Packaging Co.",
-          co2PerUnit: 3.4,
-          energyPerUnit: 22.1,
-          waterPerUnit: 95,
-          environmentalScore: 52,
-          price: 9.99,
-          isRecommended: false
-        }
-      ]
-    }
-  ];
+  const { data: supplierProducts, isLoading, error } = useSupplierProducts();
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -96,9 +26,50 @@ const ProductComparisonPanel = () => {
     return 'text-red-600';
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg">Loading products...</div>
+      </div>
+    );
+  }
+
+  if (error || !supplierProducts) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-red-600">Error loading products</div>
+      </div>
+    );
+  }
+
+  // Group products by product name for comparison
+  const productGroups = supplierProducts.reduce((groups: any, sp) => {
+    const productName = sp.products.name;
+    if (!groups[productName]) {
+      groups[productName] = {
+        productName,
+        category: sp.products.category,
+        suppliers: []
+      };
+    }
+    groups[productName].suppliers.push({
+      name: sp.suppliers.name,
+      co2PerUnit: sp.co2_per_unit,
+      energyPerUnit: sp.energy_per_unit,
+      waterPerUnit: sp.water_per_unit,
+      environmentalScore: sp.environmental_score,
+      price: sp.price,
+      supplierProduct: sp,
+      isRecommended: sp.environmental_score >= 85
+    });
+    return groups;
+  }, {});
+
+  const productComparisons = Object.values(productGroups).filter((group: any) => group.suppliers.length > 1);
+
   return (
     <div className="space-y-6">
-      {productComparisons.map((comparison, index) => (
+      {productComparisons.map((comparison: any, index) => (
         <Card key={index}>
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -154,8 +125,8 @@ const ProductComparisonPanel = () => {
               </TableHeader>
               <TableBody>
                 {comparison.suppliers
-                  .sort((a, b) => b.environmentalScore - a.environmentalScore)
-                  .map((supplier, supplierIndex) => (
+                  .sort((a: any, b: any) => b.environmentalScore - a.environmentalScore)
+                  .map((supplier: any, supplierIndex: number) => (
                   <TableRow key={supplierIndex} className={supplier.isRecommended ? 'bg-green-50' : ''}>
                     <TableCell>
                       <div className="flex items-center space-x-2">
@@ -191,13 +162,15 @@ const ProductComparisonPanel = () => {
                       ${supplier.price}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button 
-                        size="sm" 
-                        variant={supplier.isRecommended ? "default" : "outline"}
-                        className={supplier.isRecommended ? "bg-green-600 hover:bg-green-700" : ""}
-                      >
-                        Select
-                      </Button>
+                      <OrderProductModal supplierProduct={supplier.supplierProduct}>
+                        <Button 
+                          size="sm" 
+                          variant={supplier.isRecommended ? "default" : "outline"}
+                          className={supplier.isRecommended ? "bg-green-600 hover:bg-green-700" : ""}
+                        >
+                          Order Now
+                        </Button>
+                      </OrderProductModal>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -9,7 +9,218 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string | null
+          quantity: number
+          supplier_product_id: string | null
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          quantity: number
+          supplier_product_id?: string | null
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          quantity?: number
+          supplier_product_id?: string | null
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_supplier_product_id_fkey"
+            columns: ["supplier_product_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          carbon_savings: number | null
+          created_at: string
+          energy_savings: number | null
+          id: string
+          order_date: string
+          order_number: string
+          status: string | null
+          supplier_id: string | null
+          total_amount: number
+          water_savings: number | null
+        }
+        Insert: {
+          carbon_savings?: number | null
+          created_at?: string
+          energy_savings?: number | null
+          id?: string
+          order_date?: string
+          order_number: string
+          status?: string | null
+          supplier_id?: string | null
+          total_amount: number
+          water_savings?: number | null
+        }
+        Update: {
+          carbon_savings?: number | null
+          created_at?: string
+          energy_savings?: number | null
+          id?: string
+          order_date?: string
+          order_number?: string
+          status?: string | null
+          supplier_id?: string | null
+          total_amount?: number
+          water_savings?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      supplier_products: {
+        Row: {
+          co2_per_unit: number
+          created_at: string
+          energy_per_unit: number
+          environmental_score: number
+          id: string
+          price: number
+          product_id: string | null
+          stock_quantity: number | null
+          supplier_id: string | null
+          updated_at: string
+          water_per_unit: number
+        }
+        Insert: {
+          co2_per_unit: number
+          created_at?: string
+          energy_per_unit: number
+          environmental_score: number
+          id?: string
+          price: number
+          product_id?: string | null
+          stock_quantity?: number | null
+          supplier_id?: string | null
+          updated_at?: string
+          water_per_unit: number
+        }
+        Update: {
+          co2_per_unit?: number
+          created_at?: string
+          energy_per_unit?: number
+          environmental_score?: number
+          id?: string
+          price?: number
+          product_id?: string | null
+          stock_quantity?: number | null
+          supplier_id?: string | null
+          updated_at?: string
+          water_per_unit?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          carbon_footprint: number
+          certifications: string[] | null
+          created_at: string
+          energy_consumption: number
+          id: string
+          location: string
+          name: string
+          sustainability_score: number
+          trend: string | null
+          updated_at: string
+          water_usage: number
+        }
+        Insert: {
+          carbon_footprint: number
+          certifications?: string[] | null
+          created_at?: string
+          energy_consumption: number
+          id?: string
+          location: string
+          name: string
+          sustainability_score: number
+          trend?: string | null
+          updated_at?: string
+          water_usage: number
+        }
+        Update: {
+          carbon_footprint?: number
+          certifications?: string[] | null
+          created_at?: string
+          energy_consumption?: number
+          id?: string
+          location?: string
+          name?: string
+          sustainability_score?: number
+          trend?: string | null
+          updated_at?: string
+          water_usage?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

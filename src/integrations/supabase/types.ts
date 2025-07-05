@@ -9,6 +9,21 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      certification: {
+        Row: {
+          id: number
+          name: string | null
+        }
+        Insert: {
+          id?: number
+          name?: string | null
+        }
+        Update: {
+          id?: number
+          name?: string | null
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -57,7 +72,6 @@ export type Database = {
       orders: {
         Row: {
           carbon_savings: number | null
-          created_at: string
           energy_savings: number | null
           id: string
           order_date: string
@@ -69,7 +83,6 @@ export type Database = {
         }
         Insert: {
           carbon_savings?: number | null
-          created_at?: string
           energy_savings?: number | null
           id?: string
           order_date?: string
@@ -81,7 +94,6 @@ export type Database = {
         }
         Update: {
           carbon_savings?: number | null
-          created_at?: string
           energy_savings?: number | null
           id?: string
           order_date?: string
@@ -122,10 +134,39 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_certificate: {
+        Row: {
+          certificate_id: number | null
+          supp_id: string | null
+        }
+        Insert: {
+          certificate_id?: number | null
+          supp_id?: string | null
+        }
+        Update: {
+          certificate_id?: number | null
+          supp_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_certificate_certificate_id_fkey"
+            columns: ["certificate_id"]
+            isOneToOne: false
+            referencedRelation: "certification"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_certificate_supp_id_fkey"
+            columns: ["supp_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supplier_products: {
         Row: {
           co2_per_unit: number
-          created_at: string
           energy_per_unit: number
           environmental_score: number
           id: string
@@ -133,12 +174,10 @@ export type Database = {
           product_id: string | null
           stock_quantity: number | null
           supplier_id: string | null
-          updated_at: string
           water_per_unit: number
         }
         Insert: {
           co2_per_unit: number
-          created_at?: string
           energy_per_unit: number
           environmental_score: number
           id?: string
@@ -146,12 +185,10 @@ export type Database = {
           product_id?: string | null
           stock_quantity?: number | null
           supplier_id?: string | null
-          updated_at?: string
           water_per_unit: number
         }
         Update: {
           co2_per_unit?: number
-          created_at?: string
           energy_per_unit?: number
           environmental_score?: number
           id?: string
@@ -159,7 +196,6 @@ export type Database = {
           product_id?: string | null
           stock_quantity?: number | null
           supplier_id?: string | null
-          updated_at?: string
           water_per_unit?: number
         }
         Relationships: [
@@ -183,40 +219,31 @@ export type Database = {
         Row: {
           carbon_footprint: number
           certifications: string[] | null
-          created_at: string
           energy_consumption: number
           id: string
           location: string
           name: string
           sustainability_score: number
-          trend: string | null
-          updated_at: string
           water_usage: number
         }
         Insert: {
           carbon_footprint: number
           certifications?: string[] | null
-          created_at?: string
           energy_consumption: number
           id?: string
           location: string
           name: string
           sustainability_score: number
-          trend?: string | null
-          updated_at?: string
           water_usage: number
         }
         Update: {
           carbon_footprint?: number
           certifications?: string[] | null
-          created_at?: string
           energy_consumption?: number
           id?: string
           location?: string
           name?: string
           sustainability_score?: number
-          trend?: string | null
-          updated_at?: string
           water_usage?: number
         }
         Relationships: []

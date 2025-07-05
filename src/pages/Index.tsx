@@ -10,12 +10,9 @@ const Index = () => {
   const { data: suppliers, isLoading: suppliersLoading } = useSuppliers();
   const { data: supplierProducts } = useSupplierProducts();
 
-  console.log('Suppliers data:', suppliers); // Debug log
-
   // Group products by supplier for the SupplierCard component
   const getSupplierWithProducts = (supplier: any) => {
     const products = supplierProducts?.filter(sp => sp.supplier_id === supplier.id) || [];
-    console.log(`Supplier ${supplier.name} certifications:`, supplier.certifications); // Debug log
     return {
       ...supplier,
       products: products.map(sp => ({

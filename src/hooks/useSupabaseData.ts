@@ -51,43 +51,13 @@ export const useSuppliers = () => {
   return useQuery({
     queryKey: ['suppliers'],
     queryFn: async () => {
-      // First get suppliers
-      const { data: suppliersData, error: suppliersError } = await supabase
+      const { data, error } = await supabase
         .from('suppliers')
         .select('*')
         .order('sustainability_score', { ascending: false });
       
-      if (suppliersError) throw suppliersError;
-
-      // Then get certifications for each supplier
-      const { data: certificationsData, error: certificationsError } = await supabase
-        .from('supplier_certificate')
-        .select(`
-          supp_id,
-          certification:certificate_id(name)
-        `);
-      
-      if (certificationsError) throw certificationsError;
-
-      // Group certifications by supplier
-      const certificationsBySupplier = certificationsData?.reduce((acc: any, item) => {
-        if (!acc[item.supp_id]) {
-          acc[item.supp_id] = [];
-        }
-        if (item.certification?.name) {
-          acc[item.supp_id].push(item.certification.name);
-        }
-        return acc;
-      }, {}) || {};
-
-      // Combine suppliers with their certifications and add trend
-      const suppliersWithCertifications = suppliersData?.map(supplier => ({
-        ...supplier,
-        certifications: certificationsBySupplier[supplier.id] || [],
-        trend: 'up' as const // Default trend since it's not in the new schema
-      })) || [];
-
-      return suppliersWithCertifications as Supplier[];
+      if (error) throw error;
+      return data as Supplier[];
     }
   });
 };
@@ -111,50 +81,17 @@ export const useSupplierProducts = () => {
   return useQuery({
     queryKey: ['supplier-products'],
     queryFn: async () => {
-      // Get supplier products with basic supplier and product info
-      const { data: supplierProductsData, error: spError } = await supabase
+      const { data, error } = await supabase
         .from('supplier_products')
         .select(`
           *,
-          suppliers(id, name, location, sustainability_score, carbon_footprint, energy_consumption, water_usage),
+          suppliers(*),
           products(*)
         `)
         .order('environmental_score', { ascending: false });
       
-      if (spError) throw spError;
-
-      // Get certifications for all suppliers
-      const { data: certificationsData, error: certificationsError } = await supabase
-        .from('supplier_certificate')
-        .select(`
-          supp_id,
-          certification:certificate_id(name)
-        `);
-      
-      if (certificationsError) throw certificationsError;
-
-      // Group certifications by supplier
-      const certificationsBySupplier = certificationsData?.reduce((acc: any, item) => {
-        if (!acc[item.supp_id]) {
-          acc[item.supp_id] = [];
-        }
-        if (item.certification?.name) {
-          acc[item.supp_id].push(item.certification.name);
-        }
-        return acc;
-      }, {}) || {};
-
-      // Combine supplier products with certifications and trend
-      const enrichedSupplierProducts = supplierProductsData?.map(sp => ({
-        ...sp,
-        suppliers: {
-          ...sp.suppliers,
-          certifications: certificationsBySupplier[sp.suppliers.id] || [],
-          trend: 'up' as const // Default trend since it's not in the new schema
-        }
-      })) || [];
-
-      return enrichedSupplierProducts as SupplierProduct[];
+      if (error) throw error;
+      return data as SupplierProduct[];
     }
   });
 };
@@ -163,49 +100,16 @@ export const useOrders = () => {
   return useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
-      // Get orders with basic supplier info
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data, error } = await supabase
         .from('orders')
         .select(`
           *,
-          suppliers(id, name, location, sustainability_score, carbon_footprint, energy_consumption, water_usage)
+          suppliers(*)
         `)
         .order('order_date', { ascending: false });
       
-      if (ordersError) throw ordersError;
-
-      // Get certifications for all suppliers
-      const { data: certificationsData, error: certificationsError } = await supabase
-        .from('supplier_certificate')
-        .select(`
-          supp_id,
-          certification:certificate_id(name)
-        `);
-      
-      if (certificationsError) throw certificationsError;
-
-      // Group certifications by supplier
-      const certificationsBySupplier = certificationsData?.reduce((acc: any, item) => {
-        if (!acc[item.supp_id]) {
-          acc[item.supp_id] = [];
-        }
-        if (item.certification?.name) {
-          acc[item.supp_id].push(item.certification.name);
-        }
-        return acc;
-      }, {}) || {};
-
-      // Combine orders with supplier certifications and trend
-      const enrichedOrders = ordersData?.map(order => ({
-        ...order,
-        suppliers: {
-          ...order.suppliers,
-          certifications: certificationsBySupplier[order.suppliers.id] || [],
-          trend: 'up' as const // Default trend since it's not in the new schema
-        }
-      })) || [];
-
-      return enrichedOrders as Order[];
+      if (error) throw error;
+      return data as Order[];
     }
   });
 };

@@ -19,7 +19,7 @@ const DashboardHeader = ({ searchTerm, onSearchChange }: DashboardHeaderProps) =
               <Leaf className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">EcoSupply Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Sustainable HUB Dashboard</h1>
               <p className="text-sm text-gray-600">Sustainable Supply Chain Management</p>
             </div>
           </div>

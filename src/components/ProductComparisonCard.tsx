@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpDown } from 'lucide-react';
+import { Search } from 'lucide-react';
 import ProductTable from './ProductTable';
 
 interface ProductComparisonCardProps {
@@ -28,8 +29,8 @@ const ProductComparisonCard = ({ comparison, getCategoryColor, getScoreColor }: 
             </CardDescription>
           </div>
           <Button variant="outline" size="sm">
-            <ArrowUpDown className="h-4 w-4 mr-2" />
-            Sort by Impact
+            <Search className="h-4 w-4 mr-2" />
+            Search Products
           </Button>
         </div>
       </CardHeader>
